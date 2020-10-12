@@ -1,0 +1,9 @@
+{
+  "./*.{png,jpeg,jpg,gif,svg}": "imagemin-lint-staged",
+  "./*.{js,jsx,ts,tsx,json,md,html,css}": "prettier --write",
+  "./*.{js,jsx,ts,tsx}": [
+    "eslint --fix",
+    "git add .",
+    "cross-env NODE_ENV=test jest --bail --findRelatedTests"
+  ]
+}

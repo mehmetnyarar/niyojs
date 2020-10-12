@@ -1,0 +1,73 @@
+{
+  "name": "@niyojs/root",
+  "version": "1.0.0",
+  "description": "Various helpers and utilities for JS/TS projects.",
+  "keywords": [
+    "niyo",
+    "js",
+    "javascript",
+    "ts",
+    "typescript"
+  ],
+  "repository": "git@github.com:mehmetnyarar/niyojs.git",
+  "author": "Mehmet Niyazi Yarar <mehmetnyarar@gmail.com>",
+  "contributors": [
+    "Mehmet N. Yarar <mehmetnyarar@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "reset": "yarn clean && yarn install",
+    "clean": "lerna run clean --stream && rm -rf node_modules yarn*",
+    "validate": "npm-run-all typings format lint test",
+    "typings": "lerna run typings --stream --concurrency 1",
+    "format": "npm-run-all format:root format:packages",
+    "format:root": "prettier --write \"./*.{js,jsx,ts,tsx,json,md,html,css}\" --ignore-path .gitignore",
+    "format:packages": "lerna run format --stream --concurrency 1",
+    "lint": "npm-run-all lint:root lint:packages",
+    "lint:root": "eslint --fix \"./*.{js,jsx,ts,tsx}\" --ignore-path .gitignore",
+    "lint:packages": "lerna run lint --stream --concurrency 1",
+    "test": "jest && lerna run test --stream --concurrency 1",
+    "test:coverage": "jest && lerna run test --stream --concurrency 1 -- --coverage",
+    "precommit": "lint-staged && lerna run precommit --stream --concurrency 1",
+    "commit": "git add . && git-cz"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.2",
+    "npm-run-all": "^4.1.5"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-angular": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@commitlint/config-lerna-scopes": "^11.0.0",
+    "@commitlint/prompt-cli": "^11.0.0",
+    "@types/jest": "^26.0.14",
+    "@types/node": "^14.11.8",
+    "@typescript-eslint/eslint-plugin": "^4.4.0",
+    "@typescript-eslint/parser": "^4.4.0",
+    "commitizen": "^4.2.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.11.0",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "husky": "^4.3.0",
+    "jest": "^26.5.3",
+    "jest-runner-eslint": "^0.10.0",
+    "lerna": "^3.22.1",
+    "lerna-update-wizard": "^0.17.8",
+    "lerna-wizard": "^1.1.1",
+    "lint-staged": "^10.4.0",
+    "prettier": "^2.1.2",
+    "ts-jest": "^26.4.1",
+    "typescript": "^4.0.3"
+  }
+}
