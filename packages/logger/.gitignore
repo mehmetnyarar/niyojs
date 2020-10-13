@@ -1,0 +1,7 @@
+# Directories
+/coverage
+/lib
+/node_modules
+
+# Files
+*.log
