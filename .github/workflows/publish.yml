@@ -1,0 +1,40 @@
+name: Publish
+
+on:
+  push:
+    branches: ['master']
+
+env:
+  CI: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Setup Node.js
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+          registry-url: https://registry.npmjs.org
+          scope: '@niyojs'
+      # Initialize CI git user
+      - run: |
+          git config --global user.email mehmetnyarar@github.com
+          git config --global user.name GitHub Actions
+      # Install dependencies
+      - run: npm install --global lerna
+      - run: lerna bootstrap
+      # Test and build
+      - run: yarn test
+      - run: lerna run build
+      # Create a new release
+      - run: lerna version --conventional-commits --yes --create-release github
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+      # Publish to NPM
+      - run: lerna publish from-git --yes -- --access public
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
