@@ -17,7 +17,7 @@ let BROWSER_STYLES = DEFAULT_BROWSER_STYLES
  * @param value Styles.
  */
 export function setNodeStyles (styles: Partial<LogStyles>): void {
-  NODE_STYLES = merge(DEFAULT_NODE_STYLES, styles, '')
+  NODE_STYLES = merge(DEFAULT_NODE_STYLES, styles)
 }
 
 /**
@@ -25,7 +25,7 @@ export function setNodeStyles (styles: Partial<LogStyles>): void {
  * @param value Styles.
  */
 export function setBrowserStyles (styles: Partial<LogStyles>): void {
-  BROWSER_STYLES = merge(DEFAULT_BROWSER_STYLES, styles, '')
+  BROWSER_STYLES = merge(DEFAULT_BROWSER_STYLES, styles)
 }
 
 export { NODE_STYLES, BROWSER_STYLES }

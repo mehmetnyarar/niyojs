@@ -1,7 +1,9 @@
 import { Logger } from 'src/logger'
 import { LogStorage } from 'src/storage'
 
-jest.mock('chalk')
+const infoSpy = jest.spyOn(console, 'info')
+const dirSpy = jest.spyOn(console, 'dir')
+const node = typeof window === 'undefined'
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -46,37 +48,36 @@ describe('logger', () => {
       expect(console.info).not.toHaveBeenCalled()
     })
 
-    // Switch "testEnvironment" to "jsdom" to test it in the browser
-    if (typeof window === 'undefined') {
-      it('should print to the console (node)', () => {
-        const logger = new Logger({ src: 'test', level: 'info' })
-        logger.console('info', 'Test message')
-        expect(console.info).toHaveBeenCalledTimes(1)
-      })
+    it('should print to the console (node)', () => {
+      const logger = new Logger({ src: 'test', level: 'info' })
+      logger.console('info', 'Test message')
 
-      it('should print to the console (node/with meta)', () => {
-        const logger = new Logger({ src: 'test', level: 'info' })
-        const meta = { data: 'Extra info' }
-        logger.console('info', 'Test message', meta)
-        expect(console.info).toHaveBeenCalledTimes(2)
-      })
-    } else {
-      it('should print to the console (browser)', () => {
-        const logger = new Logger({ src: 'test', level: 'info' })
-        logger.console('info', 'Test message')
-        expect(console.info).toHaveBeenCalledTimes(1)
-      })
+      expect(console.info).toHaveBeenCalledTimes(1)
+      expect(infoSpy.mock.calls[0]).toHaveLength(node ? 1 : 3)
+      expect(infoSpy.mock.calls[0][0]).toMatch(/test/i)
+      expect(dirSpy).not.toHaveBeenCalled()
+    })
 
-      it('should print to the console (browser/with meta)', () => {
-        jest.spyOn(console, 'dir')
+    it('should print to the console (node/meta/primitive)', () => {
+      const logger = new Logger({ src: 'test', level: 'info' })
+      logger.console('info', 'Test message', 'Extra info')
 
-        const logger = new Logger({ src: 'test', level: 'info' })
-        const meta = { data: 'Extra info' }
-        logger.console('info', 'Test message', meta)
-        expect(console.info).toHaveBeenCalledTimes(1)
-        expect(console.dir).toHaveBeenCalledWith(meta)
-      })
-    }
+      expect(console.info).toHaveBeenCalledTimes(1)
+      expect(infoSpy.mock.calls[0]).toHaveLength(node ? 1 : 4)
+      expect(infoSpy.mock.calls[0][0]).toMatch(/extra/i)
+      expect(dirSpy).not.toHaveBeenCalled()
+    })
+
+    it('should print to the console (node/meta/non-primitive)', () => {
+      const logger = new Logger({ src: 'test', level: 'info' })
+      const infoSpy = jest.spyOn(console, 'info')
+      logger.console('info', 'Test message', { data: 'Extra info' })
+
+      expect(console.info).toHaveBeenCalledTimes(1)
+      expect(infoSpy.mock.calls[0]).toHaveLength(node ? 1 : 4)
+      expect(infoSpy.mock.calls[0][0]).toMatch(/test/i)
+      expect(dirSpy).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('store', () => {

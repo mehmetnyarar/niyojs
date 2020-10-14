@@ -1,4 +1,11 @@
-import { LogLevels, LogStyles } from './types'
+import { LogLevels, LogMetaOptions, LogStyles } from './types'
+
+/**
+ * Default meta display options.
+ */
+export const DEFAULT_META_OPTIONS: LogMetaOptions = {
+  separator: '>'
+}
 
 /**
  * Log levels.
@@ -20,9 +27,9 @@ export const DEFAULT_LOG_LEVELS: LogLevels = {
  */
 export const DEFAULT_NODE_STYLES: LogStyles = {
   off: 'hidden',
-  fatal: 'red',
+  fatal: 'hex("#8b0000")',
   error: 'red',
-  todo: 'purple',
+  todo: 'magenta',
   warn: 'yellow',
   success: 'green',
   info: 'blue',

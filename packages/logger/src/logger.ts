@@ -1,9 +1,10 @@
 import chalk from 'chalk'
+import { DEFAULT_META_OPTIONS } from './const'
 import { LOG_LEVELS } from './levels'
 import { LogStorage } from './storage'
 import { BROWSER_STYLES, NODE_STYLES } from './styles'
-import { LogLevel, LogMeta } from './types'
-import { getConsoleMethod } from './utility'
+import { LogLevel, LogMeta, LogMetaOptions, LogMethod } from './types'
+import { getConsoleMethod, isPrimitive, merge, objectifyError } from './utility'
 
 /**
  * Options to create a new Logger.
@@ -25,6 +26,11 @@ export interface LoggerOptions {
    * Storages. Default is empty array.
    */
   storages?: LogStorage[]
+
+  /**
+   * Meta display options.
+   */
+  meta?: LogMetaOptions
 }
 
 /**
@@ -49,6 +55,11 @@ export class Logger {
    */
   readonly storages: LogStorage[]
 
+  /**
+   * Meta display options.
+   */
+  readonly meta: LogMetaOptions
+
   // #endregion
 
   // #region Constructor
@@ -61,6 +72,7 @@ export class Logger {
     this.src = options.src || 'main'
     this.level = options.level || 'info'
     this.storages = options.storages || []
+    this.meta = merge(DEFAULT_META_OPTIONS, options.meta)
   }
 
   // #endregion
@@ -73,26 +85,44 @@ export class Logger {
    * @param message Message.
    * @param [meta] Additional information.
    */
-  console (level: LogLevel, message: string, meta?: LogMeta): void {
+  console (level: LogMethod, message: string, meta?: LogMeta): void {
     if (this.level === 'off') return
     if (LOG_LEVELS[level] > LOG_LEVELS[this.level]) return
 
-    const method = getConsoleMethod(level) || 'log'
+    const { separator, ...options } = this.meta
+    const method = getConsoleMethod(level)
+    const primitive = isPrimitive(meta)
+    const hasSeparator = meta && separator
 
     if (typeof window === 'undefined') {
       const time = new Date().toISOString()
       const info = chalk`{grey ${time}} {bold [${this.src}]}`
 
-      console[method](chalk`${info} {${NODE_STYLES[level]} ${message}}`)
-      if (meta) console[method](JSON.stringify(meta, null, 2))
-    } else {
-      console[method](
-        `%c[${this.src}] %c${message}`,
-        'font: bold',
-        BROWSER_STYLES[level]
-      )
+      let msg = chalk`${info} {${NODE_STYLES[level]} ${message}}`
+      if (hasSeparator) msg += chalk`{grey ${separator}}`
+      if (primitive) msg += ` ${meta}`
 
-      if (meta) console.dir(meta)
+      console[method](msg)
+    } else {
+      let msg = `%c[${this.src}] %c${message}`
+      if (hasSeparator) msg += ` %c${separator}`
+      if (primitive) msg += ` ${meta}`
+
+      if (hasSeparator) {
+        console[method](
+          msg,
+          'font: bold;',
+          BROWSER_STYLES[level],
+          'color: grey;'
+        )
+      } else {
+        console[method](msg, 'font: bold;', BROWSER_STYLES[level])
+      }
+    }
+
+    if (meta && !primitive) {
+      const extra = meta instanceof Error ? objectifyError(meta) : meta
+      console.dir(extra, options)
     }
   }
 
