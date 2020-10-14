@@ -99,7 +99,7 @@ export class Logger {
       const info = chalk`{grey ${time}} {bold [${this.src}]}`
 
       let msg = chalk`${info} {${NODE_STYLES[level]} ${message}}`
-      if (hasSeparator) msg += chalk`{grey ${separator}}`
+      if (hasSeparator) msg += chalk` {grey ${separator}}`
       if (primitive) msg += ` ${meta}`
 
       console[method](msg)

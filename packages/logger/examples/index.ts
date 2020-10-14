@@ -1,4 +1,6 @@
-import * as fileStorage from './file-storage'
+import * as ConsoleExamples from './console'
+import * as FileStorageExample from './file-storage'
 
 // Run all the examples
-fileStorage.run()
+ConsoleExamples.run()
+FileStorageExample.run()
