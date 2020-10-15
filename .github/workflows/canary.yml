@@ -29,7 +29,7 @@ jobs:
       - run: yarn test
       - run: lerna run build
       # Create a new release
-      - run: lerna version --conventional-commits --conventional-prerelease --yes github
+      - run: lerna version prerelease --conventional-commits --conventional-prerelease --yes github
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
