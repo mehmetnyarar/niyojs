@@ -1,6 +1,6 @@
 {
   "name": "@niyojs/logger",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Custom console API with extended functionality.",
   "keywords": [
     "log",
